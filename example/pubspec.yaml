@@ -1,0 +1,13 @@
+name: digits_to_words_russian_example
+description: Example usage of the digits_to_words_russian package.
+publish_to: 'none'
+
+environment:
+  sdk: '>=2.17.0 <4.0.0'
+
+dependencies:
+  digits_to_words_russian:
+    path: ../
+
+dev_dependencies:
+  lints: ^2.0.0

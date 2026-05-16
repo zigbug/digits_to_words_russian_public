@@ -1,3 +1,17 @@
+## 1.1.2
+
+* NEW: Support for ordinal numerals via `ordinalToWords()`
+* NEW: Date formatting via `dateToWords()`
+* NEW: Support for three grammatical genders for ordinal numerals (m/f/n)
+* Correct declension of Russian ordinal numerals
+* Updated README
+
+* **НОВОЕ:** Поддержка порядковых числительных через `ordinalToWords()`
+* **НОВОЕ:** Форматирование дат через `dateToWords()`
+* **НОВОЕ:** Поддержка трёх родов для порядковых числительных (m/f/n)
+* Правильное склонение русских порядковых числительных
+* Обновлённый README
+
 ## 1.1.1
 
 * Updated README with improved documentation
