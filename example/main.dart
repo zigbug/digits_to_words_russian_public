@@ -65,4 +65,30 @@ void main() {
       '28 марта 1985 (именительный): ${parser.dateToWords(day: 28, month: 3, year: 1985, dayCase: 'nominative')}');
   print(
       '8 марта 1917 (родительный): ${parser.dateToWords(day: 8, month: 3, year: 1917)}');
+
+  print('\n=== Время (timeToWord) ===');
+  print('23:56:17: ${parser.timeToWord(time: "23:56:17")}');
+  print('4:00: ${parser.timeToWord(hours: 4)}');
+  print('1:30: ${parser.timeToWord(hours: 1, minutes: 30)}');
+  print('1:02: ${parser.timeToWord(minutes: 1, seconds: 2)}');
+  print('0:00: ${parser.timeToWord(hours: 0, minutes: 0)}');
+  print('21:05: ${parser.timeToWord(hours: 21, minutes: 5)}');
+  print('2:21: ${parser.timeToWord(hours: 2, minutes: 21)}');
+  print('3:45: ${parser.timeToWord(hours: 3, minutes: 45)}');
+  print('0:01: ${parser.timeToWord(minutes: 1)}');
+  print('0:02: ${parser.timeToWord(minutes: 2)}');
+  print('0:03: ${parser.timeToWord(minutes: 3)}');
+  print('0:11: ${parser.timeToWord(minutes: 11)}');
+  print('0:12: ${parser.timeToWord(minutes: 12)}');
+  print('0:20: ${parser.timeToWord(minutes: 20)}');
+  print('0:21: ${parser.timeToWord(minutes: 21)}');
+  print('0:22: ${parser.timeToWord(minutes: 22)}');
+  print('0:23: ${parser.timeToWord(minutes: 23)}');
+  print('0:00:01: ${parser.timeToWord(seconds: 1)}');
+  print('0:00:02: ${parser.timeToWord(seconds: 2)}');
+  print('0:00:11: ${parser.timeToWord(seconds: 11)}');
+  print('1:01:01: ${parser.timeToWord(hours: 1, minutes: 1, seconds: 1)}');
+  print('2:02:02: ${parser.timeToWord(hours: 2, minutes: 2, seconds: 2)}');
+  print('12:00:00: ${parser.timeToWord(time: "12:00:00")}');
+  print('время по строке: ${parser.timeToWord(time: "12:30")}');
 }
