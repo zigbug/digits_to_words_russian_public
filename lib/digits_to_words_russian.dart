@@ -3,6 +3,7 @@ library digits_to_words_russian;
 import 'dart:core';
 
 import 'exception.dart';
+export 'exception.dart';
 
 class DigitsToWordsParser {
   final List<List<String>> _digs = [
@@ -650,6 +651,167 @@ class DigitsToWordsParser {
         return _toGenitiveOrdinal(remainder);
       }
     }
+  }
+
+  /// Converts a number to words, with optional feminine form for units digit 1 and 2.
+  ///
+  /// Used internally for time components. For minutes and seconds (feminine),
+  /// "один" → "одна", "два" → "две" in the units position.
+  /// Teens (11–19) are not affected by gender.
+  String _timeNumberToWords(int number, {bool feminine = false}) {
+    if (number == 0) return 'ноль';
+
+    String result = toWords(number: number);
+
+    if (feminine) {
+      // Replace the last word if it's "один" → "одна" or "два" → "две"
+      // Only applies when the number does NOT end in 11-19 (teens don't change gender)
+      if (number % 100 < 10 || number % 100 > 20) {
+        int lastDigit = number % 10;
+        if (lastDigit == 1 || lastDigit == 2) {
+          List<String> parts = result.split(' ');
+          String lastWord = parts.last;
+          if (lastWord == 'один') {
+            parts[parts.length - 1] = 'одна';
+          } else if (lastWord == 'два') {
+            parts[parts.length - 1] = 'две';
+          }
+          result = parts.join(' ');
+        }
+      }
+    }
+
+    return result;
+  }
+
+  /// Returns the correct Russian declension for time units (hours, minutes, seconds).
+  ///
+  /// [number] — the numeric value of the unit.
+  /// [unit] — one of: 'час', 'минут', 'секунд' (the base form).
+  ///
+  /// Returns the correct form based on standard Russian grammar rules:
+  /// - 1 (not 11) → "час", "минута", "секунда"
+  /// - 2-4 (not 12-14) → "часа", "минуты", "секунды"
+  /// - 0, 5-9, 11-19 → "часов", "минут", "секунд"
+  String _getTimeUnitForm(int number, String unit) {
+    // Define the three forms: [one, few, many]
+    List<String> forms;
+    switch (unit) {
+      case 'час':
+        forms = ['час', 'часа', 'часов'];
+        break;
+      case 'минут':
+        forms = ['минута', 'минуты', 'минут'];
+        break;
+      case 'секунд':
+        forms = ['секунда', 'секунды', 'секунд'];
+        break;
+      default:
+        return unit;
+    }
+
+    // Teens (11-19) always take the plural genitive form (many)
+    int mod100 = number % 100;
+    if (mod100 >= 11 && mod100 <= 19) {
+      return forms[2];
+    }
+
+    int lastDigit = number % 10;
+    if (lastDigit == 1) return forms[0]; // "час", "минута", "секунда"
+    if (lastDigit >= 2 && lastDigit <= 4)
+      return forms[1]; // "часа", "минуты", "секунды"
+    return forms[2]; // "часов", "минут", "секунд"
+  }
+
+  /// Converts a time value to its Russian text representation.
+  ///
+  /// You can specify time either as a string in "HH:MM" or "HH:MM:SS" format,
+  /// or as individual components (`hours`, `minutes`, `seconds`).
+  /// All parameters are optional — only provided components are included in the result.
+  ///
+  /// Examples:
+  /// ```dart
+  /// parser.timeToWord(time: "23:56:17")
+  /// // "двадцать три часа пятьдесят шесть минут семнадцать секунд"
+  ///
+  /// parser.timeToWord(hours: 4)
+  /// // "четыре часа"
+  ///
+  /// parser.timeToWord(hours: 1, minutes: 30)
+  /// // "один час тридцать минут"
+  ///
+  /// parser.timeToWord(minutes: 1, seconds: 2)
+  /// // "одна минута две секунды"
+  /// ```
+  String timeToWord({
+    String? time,
+    int? hours,
+    int? minutes,
+    int? seconds,
+  }) {
+    // Parse string format "HH:MM" or "HH:MM:SS"
+    if (time != null) {
+      List<String> parts = time.split(':');
+      if (parts.length < 2 || parts.length > 3) {
+        throw DigitsToWordsRussianParserException(
+            message:
+                'неверный формат времени. Используйте "HH:MM" или "HH:MM:SS"');
+      }
+      hours = int.tryParse(parts[0]);
+      minutes = int.tryParse(parts[1]);
+      seconds = parts.length == 3 ? int.tryParse(parts[2]) : null;
+
+      if (hours == null ||
+          minutes == null ||
+          (parts.length == 3 && seconds == null)) {
+        throw DigitsToWordsRussianParserException(
+            message: 'неверный формат времени. Используйте числовые значения');
+      }
+    }
+
+    // Validate that at least something was provided
+    if (hours == null && minutes == null && seconds == null) {
+      throw DigitsToWordsRussianParserException(
+          message:
+              'необходимо указать время или хотя бы один из параметров: hours, minutes, seconds');
+    }
+
+    List<String> resultParts = [];
+
+    // Hours: use masculine forms (default)
+    if (hours != null) {
+      if (hours < 0 || hours > 23) {
+        throw DigitsToWordsRussianParserException(
+            message: 'часы должны быть от 0 до 23');
+      }
+      String hoursWord = _timeNumberToWords(hours);
+      String unitForm = _getTimeUnitForm(hours, 'час');
+      resultParts.add('$hoursWord $unitForm');
+    }
+
+    // Minutes: use feminine forms for units digit 1 and 2
+    if (minutes != null) {
+      if (minutes < 0 || minutes > 59) {
+        throw DigitsToWordsRussianParserException(
+            message: 'минуты должны быть от 0 до 59');
+      }
+      String minutesWord = _timeNumberToWords(minutes, feminine: true);
+      String unitForm = _getTimeUnitForm(minutes, 'минут');
+      resultParts.add('$minutesWord $unitForm');
+    }
+
+    // Seconds: use feminine forms for units digit 1 and 2
+    if (seconds != null) {
+      if (seconds < 0 || seconds > 59) {
+        throw DigitsToWordsRussianParserException(
+            message: 'секунды должны быть от 0 до 59');
+      }
+      String secondsWord = _timeNumberToWords(seconds, feminine: true);
+      String unitForm = _getTimeUnitForm(seconds, 'секунд');
+      resultParts.add('$secondsWord $unitForm');
+    }
+
+    return resultParts.join(' ');
   }
 
   /// Преобразует порядковое числительное в родительный падеж (м.р.)
