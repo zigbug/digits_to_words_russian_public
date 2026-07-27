@@ -13,6 +13,9 @@ A Flutter/Dart package that converts numbers to their textual representation in 
 - **NEW:** Ordinal numerals support (первый, второй, третий...) with gender options (masculine, feminine, neuter)
 - Perfect for dates, rankings, and positions (1 марта, 21 место и т.д.)
 - **NEW:** Date formatting with `dateToWords` method (day case and month format options)
+- **NEW:** Time to words with `timeToWord` method (supports "HH:MM" and "HH:MM:SS" string format, or individual hours/minutes/seconds parameters)
+- Proper feminine forms for minutes and seconds ("одна минута", "две секунды")
+- Correct Russian declension for time units (час/часа/часов, минута/минуты/минут, секунда/секунды/секунд)
 
 ## Getting started
 
@@ -20,7 +23,7 @@ Add the package to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  digits_to_words_russian: ^1.1.2
+  digits_to_words_russian: ^1.1.3
 ```
 
 Then run `flutter pub get` or `dart pub get`.
@@ -63,10 +66,21 @@ void main() {
   print(parser.dateToWords(day: 9, month: 5, year: 1945));  // "девятого мая тысяча девятьсот сорок пятого"
   print(parser.dateToWords(day: 14, month: 7, year: 1789, dayCase: 'nominative'));  // "четырнадцатое июля одна тысяча семьсот восемьдесят девятого"
   
-  // Date examples
-  print('21 марта: ${parser.ordinalToWords(number: 21)} марта');
-  print('1 января: ${parser.ordinalToWords(number: 1)} января');
-  print('32-е место: ${parser.ordinalToWords(number: 32, gender: 'n')}-е место');
+  // Time to words with timeToWord method
+  print(parser.timeToWord(time: "23:56:17"));
+  // Output: "двадцать три часа пятьдесят шесть минут семнадцать секунд"
+  
+  print(parser.timeToWord(hours: 4));
+  // Output: "четыре часа"
+  
+  print(parser.timeToWord(hours: 1, minutes: 30));
+  // Output: "один час тридцать минут"
+  
+  print(parser.timeToWord(minutes: 1, seconds: 2));
+  // Output: "одна минута две секунды"
+  
+  print(parser.timeToWord(hours: 2, minutes: 2, seconds: 2));
+  // Output: "два часа две минуты две секунды"
 }
 ```
 
@@ -86,13 +100,16 @@ Flutter/Dart пакет, который преобразует числа в и�
 
 - Преобразование целых чисел в их текстовое представление на русском языке
 - Поддержка чисел до 999 999 999 999 (до 999 миллиардов включительно)
-- Правильная обработка русских грамматических падежей для единиц (один/одна, два/две)
+- Правильная обработка русских падежей для единиц (один/одна, два/две)
 - Корректное склонение для тысяч (тысяча, тысячи, тысяч), миллионов (миллион, миллиона, миллионов) и миллиардов (миллиард, миллиарда, миллиардов)
 - Обработка особых случаев для чисел, оканчивающихся на 11-19 (одиннадцать, двенадцать и т.д.)
 - Правильное форматирование сотен, десятков и единиц
 - **НОВОЕ:** Поддержка порядковых числительных (первый, второй, третий...) с опциями рода (мужской, женский, средний)
 - Идеально для дат, мест и позиций (1 марта, 21 место и т.д.)
 - **НОВОЕ:** Форматирование дат с методом `dateToWords` (c выбором падежа дня)
+- **НОВОЕ:** Преобразование времени в текст с методом `timeToWord` (поддерживает строки "HH:MM" и "HH:MM:SS", а также отдельные параметры hours/minutes/seconds)
+- Правильные формы женского рода для минут и секунд ("одна минута", "две секунды")
+- Корректное склонение единиц времени (час/часа/часов, минута/минуты/минут, секунда/секунды/секунд)
 
 ## Начало работы
 
@@ -100,7 +117,7 @@ Flutter/Dart пакет, который преобразует числа в и�
 
 ```yaml
 dependencies:
-  digits_to_words_russian: ^1.1.2
+  digits_to_words_russian: ^1.1.3
 ```
 
 Затем выполните `flutter pub get` или `dart pub get`.
@@ -143,10 +160,21 @@ void main() {
   print(parser.dateToWords(day: 9, month: 5, year: 1945));  // "девятого мая тысяча девятьсот сорок пятого"
   print(parser.dateToWords(day: 14, month: 7, year: 1789, dayCase: 'nominative'));  // "четырнадцатое июля одна тысяча семьсот восемьдесят девятого"
   
-  // Примеры для дат
-  print('21 марта: ${parser.ordinalToWords(number: 21)} марта');
-  print('1 января: ${parser.ordinalToWords(number: 1)} января');
-  print('32-е место: ${parser.ordinalToWords(number: 32, gender: 'n')}-е место');
+  // Преобразование времени в текст с методом timeToWord
+  print(parser.timeToWord(time: "23:56:17"));
+  // Вывод: "двадцать три часа пятьдесят шесть минут семнадцать секунд"
+  
+  print(parser.timeToWord(hours: 4));
+  // Вывод: "четыре часа"
+  
+  print(parser.timeToWord(hours: 1, minutes: 30));
+  // Вывод: "один час тридцать минут"
+  
+  print(parser.timeToWord(minutes: 1, seconds: 2));
+  // Вывод: "одна минута две секунды"
+  
+  print(parser.timeToWord(hours: 2, minutes: 2, seconds: 2));
+  // Вывод: "два часа две минуты две секунды"
 }
 ```
 
@@ -157,3 +185,4 @@ void main() {
 🔗 **GitHub:** https://github.com/zigbug/digits_to_words_russian_public
 
 Для вклада или сообщений о проблемах посетите наш репозиторий на GitHub.
+
